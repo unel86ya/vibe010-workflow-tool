@@ -1,0 +1,9 @@
+{
+  "name": "@llm-workflow-tool/shared",
+  "private": true,
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "build": "echo 'shared build placeholder'"
+  }
+}

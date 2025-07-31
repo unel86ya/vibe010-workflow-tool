@@ -1,0 +1,22 @@
+{
+  "name": "llm-workflow-tool",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "bun run build:server && bun run build:client",
+    "build:server": "cd apps/flow-configuration-server && bun run build",
+    "build:client": "cd apps/flow-configuration-client && bun run build-binary",
+    "clean:client": "cd apps/flow-configuration-client && bun run clean",
+    "clean:server": "cd apps/flow-configuration-server && bun run clean || true",
+    "clean:dist": "rm -rf dist",
+    "clean:all": "bun run clean:client && bun run clean:server && bun run clean:dist"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.19",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}

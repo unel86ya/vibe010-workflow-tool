@@ -1,0 +1,14 @@
+{
+  "name": "llm-cli",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "commander": "^11.0.0",
+    "@llm-workflow-tool/shared": "workspace:*",
+    "@llm-workflow-tool/workflow": "workspace:*"
+  },
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "build": "bun build --compile src/index.ts --outfile ../../dist/llm-cli"
+  }
+}
