@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@llm-workflow-tool/shared": "workspace:*",
+    "@workflow-tool/shared": "workspace:*",
     "elysia": "^1.3.7"
   },
   "scripts": {

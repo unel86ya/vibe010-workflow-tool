@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 import { Command } from 'commander';
-import { runFlow } from '@llm-workflow-tool/workflow';
+import { runFlow } from '@workflow-tool/workflow';
 
 const program = new Command();
 

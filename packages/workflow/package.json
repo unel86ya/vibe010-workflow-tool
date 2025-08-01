@@ -1,12 +1,16 @@
 {
-  "name": "@llm-workflow-tool/workflow",
+  "name": "@workflow-tool/workflow",
   "private": true,
   "main": "src/index.ts",
   "type": "module",
   "dependencies": {
-    "@llm-workflow-tool/shared": "workspace:*"
+    "@workflow-tool/shared": "workspace:*",
+    "yaml": "^2.8.0"
   },
   "scripts": {
     "build": "echo 'workflow build placeholder'"
+  },
+  "exports": {
+    ".": "./src/index.ts"
   }
 }

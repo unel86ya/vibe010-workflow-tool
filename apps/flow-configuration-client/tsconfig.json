@@ -1,0 +1,12 @@
+{
+  "extends": "./.svelte-kit/tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      // Копируем пути из корневого tsconfig.json
+      "@workflow-tool/shared": ["../../packages/shared/src"],
+      "@workflow-tool/shared/*": ["../../packages/shared/src/*"],
+      "@workflow-tool/workflow": ["../../packages/workflow/src"],
+      "@workflow-tool/workflow/*": ["../../packages/workflow/src/*"]
+    }
+  }
+}

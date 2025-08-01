@@ -10,9 +10,20 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "types": ["bun-types"],
+    "paths": {
+      "@workflow-tool/shared": ["./packages/shared/src"],
+      "@workflow-tool/shared/*": ["./packages/shared/src/*"],
+
+      "@workflow-tool/workflow": ["./packages/workflow/src"],
+      "@workflow-tool/workflow/*": ["./packages/workflow/src/*"]
+    }
   },
   "include": [
-    "src/**/*.ts",
-    "src/**/*.d.ts"
-  ]
+    "./**/src/**/*.ts",
+    "./**/*.d.ts"
+  ],
+   "exclude": [
+    "node_modules",
+    "dist"
+  ],
 }

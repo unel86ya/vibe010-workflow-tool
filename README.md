@@ -1,6 +1,6 @@
-# llm-workflow-tool
+# workflow-tool
 
-LLM workflow tool: CLI + configuration UI + API server
+Workflow tool: CLI + configuration UI + API server
 
 ## Структура
 

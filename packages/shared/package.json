@@ -1,9 +1,16 @@
 {
-  "name": "@llm-workflow-tool/shared",
+  "name": "@workflow-tool/shared",
   "private": true,
   "main": "src/index.ts",
   "type": "module",
   "scripts": {
-    "build": "echo 'shared build placeholder'"
+    "build": "tsc",
+    "test": "bun test"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0"
+  },
+  "exports": {
+    ".": "./src/index.ts"
   }
 }

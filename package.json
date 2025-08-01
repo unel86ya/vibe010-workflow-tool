@@ -1,5 +1,5 @@
 {
-  "name": "llm-workflow-tool",
+  "name": "workflow-tool",
   "private": true,
   "workspaces": [
     "packages/*",
@@ -9,10 +9,17 @@
     "build": "bun run build:server && bun run build:client",
     "build:server": "cd apps/flow-configuration-server && bun run build",
     "build:client": "cd apps/flow-configuration-client && bun run build-binary",
+    "install:client": "bun install --cwd apps/flow-configuration-client",
+    "install:server": "bun install --cwd apps/flow-configuration-server",
+    "install:cli": "bun install --cwd apps/cli",
+    "install:shared": "bun install --cwd packages/shared",
+    "install:workflow": "bun install --cwd packages/workflow",
+    "install:all": "bun run install:client && bun run install:server && bun run install:cli && bun run install:shared && bun run install:workflow",
     "clean:client": "cd apps/flow-configuration-client && bun run clean",
     "clean:server": "cd apps/flow-configuration-server && bun run clean || true",
     "clean:dist": "rm -rf dist",
-    "clean:all": "bun run clean:client && bun run clean:server && bun run clean:dist"
+    "clean:all": "bun run clean:client && bun run clean:server && bun run clean:dist",
+    "clean:all-dependencies": "rm -rf node_modules packages/*/node_modules apps/*/node_modules"
   },
   "devDependencies": {
     "@types/bun": "^1.2.19",

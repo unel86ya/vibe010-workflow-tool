@@ -1,10 +1,11 @@
 import { browser } from '$app/environment';
 import type { ApiClient } from '../api';
+import { getErrorMessage } from '@workflow-tool/shared';
 
 export function createApiHealthStore() {
   let isHealthy = $state<boolean>(false);
   let lastChecked = $state<Date | null>(null);
-  let lastHealthyAt = $state<Date | null>(null); // 🆕 Новое поле!
+  let lastHealthyAt = $state<Date | null>(null);
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
   let isRunning = false;
 
@@ -39,7 +40,7 @@ export function createApiHealthStore() {
         if (error.name === 'AbortError') {
           console.warn('⏱️ API health check timeout');
         } else {
-          console.warn('❌ API health check error:', error.message);
+          console.warn('❌ API health check error:', getErrorMessage(error));
         }
       }
     }
