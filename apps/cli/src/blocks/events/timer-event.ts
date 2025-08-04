@@ -2,7 +2,8 @@ import {
   BlockRuntime,
   BlockDescriptor,
   RunContext,
-  InvokeResult
+  InvokeResult,
+  BlockConfig
 } from '@workflow-tool/shared';
 
 interface TimerConfig {
@@ -11,13 +12,22 @@ interface TimerConfig {
   immediate?: boolean; // запустить сразу
 }
 
+function isTimerConfig(config: unknown): config is TimerConfig {
+  if (!config || typeof config !== 'object') return false;
+
+  if (!Object.prototype.hasOwnProperty.call(config, 'schedule')) return false;
+
+  return true;
+}
+
 export class TimerEvent implements BlockRuntime {
   static readonly descriptor: BlockDescriptor = {
     meta: {
       id: 'timer-event',
       title: 'Timer Event',
       version: '1.0.0',
-      description: 'Циклический таймер в стиле cron (миллисекунды, секунды, минуты)'
+      description: 'Циклический таймер в стиле cron (миллисекунды, секунды, минуты)',
+      filePath: __filename,
     },
     kind: 'event',
     ports: [
@@ -62,7 +72,8 @@ export class TimerEvent implements BlockRuntime {
   private config!: TimerConfig;
   private ctx!: RunContext;
 
-  async init(config: TimerConfig, ctx: RunContext): Promise<void> {
+  async init(config: BlockConfig, ctx: RunContext): Promise<void> {
+    if (!isTimerConfig(config)) throw new Error('Not a timer config!');
     this.config = config;
     this.ctx = ctx;
 

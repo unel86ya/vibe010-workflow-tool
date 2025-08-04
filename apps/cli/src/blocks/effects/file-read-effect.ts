@@ -1,4 +1,4 @@
-import { readFile } from 'fs/promises';
+import { readFile, stat } from 'fs/promises';
 import {
   BlockRuntime,
   BlockDescriptor,
@@ -18,7 +18,8 @@ export class FileReadEffect implements BlockRuntime {
       id: 'file-read-effect',
       title: 'File Read Effect',
       version: '1.0.0',
-      description: 'Читает содержимое файла'
+      description: 'Читает содержимое файла',
+      filePath: __filename,
     },
     kind: 'effect',
     ports: [

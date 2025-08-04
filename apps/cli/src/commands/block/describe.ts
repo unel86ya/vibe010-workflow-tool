@@ -62,7 +62,7 @@ function printBlockDescription(block: BlockDescriptor) {
     console.log('\n⚙️  Configuration:');
     if (block.configSchema.properties) {
       Object.entries(block.configSchema.properties).forEach(([key, schema]: [string, any]) => {
-        const required = block.configSchema.required?.includes(key) ? ' (required)' : '';
+        const required = block.configSchema?.required?.includes(key) ? ' (required)' : '';
         console.log(`  - ${key}${required}: ${schema.description || 'No description'}`);
       });
     }

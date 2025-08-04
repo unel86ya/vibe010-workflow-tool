@@ -19,7 +19,8 @@ export class FetchEffect implements BlockRuntime {
       id: 'fetch-effect',
       title: 'Fetch Effect',
       version: '1.0.0',
-      description: 'Выполняет HTTP запрос'
+      description: 'Выполняет HTTP запрос',
+      filePath: __filename,
     },
     kind: 'effect',
     ports: [
@@ -45,7 +46,7 @@ export class FetchEffect implements BlockRuntime {
         name: 'body',
         direction: 'in',
         description: 'Тело запроса',
-        schema: { type: 'any' }
+        schema: {}
       },
       {
         name: 'response',
@@ -57,7 +58,7 @@ export class FetchEffect implements BlockRuntime {
             status: { type: 'number' },
             statusText: { type: 'string' },
             headers: { type: 'object' },
-            data: { type: 'any' }
+            data: {}
           }
         }
       },

@@ -4,8 +4,10 @@ import { YamlUtils } from '@workflow-tool/workflow';
 import { getErrorMessage } from '@workflow-tool/shared';
 
 export function addRunCommands(program: Command, getEngine: () => FlowEngine) {
+  console.log('🐛 Adding run command...');
+
   program
-    .command('flow run <file>')
+    .command('run <file>')
     .description('Запустить workflow из файла')
     .option('-w, --watch', 'Перезапускать при изменении файла')
     .option('-t, --timeout <ms>', 'Таймаут выполнения в мс', parseInt)

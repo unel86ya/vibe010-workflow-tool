@@ -1,0 +1,134 @@
+name: full-test-with-fetch-and-dyn
+version: 1.0.0
+description: 'Тест всех блоков: const, variable, event, compute (static+dyn), file-read, fetch, console, file-write'
+
+blocks:
+  # === КОНСТАНТЫ ===
+  file_path:
+    type: const-block
+    config:
+      value: "./data/input.json"
+
+  fetch_url:
+    type: const-block
+    config:
+      value: "https://jsonplaceholder.typicode.com/todos/1"
+
+  # Динамический код: возводим число в квадрат
+  code_const:
+    type: const-block
+    config:
+      value: "return { square: inputs.in * inputs.in };"
+
+  # === ПЕРЕМЕННАЯ ===
+  run_counter:
+    type: variable-block
+    config:
+      name: run_counter
+      initial: 0
+
+  # === СОБЫТИЯ ===
+  starter:
+    type: action-event
+    config:
+      data: "INIT"
+
+  ticker:
+    type: timer-event
+    config:
+      schedule: "*/5s"
+      maxRuns: 1
+
+  # === ФАЙЛОВЫЕ ЭФФЕКТЫ ===
+  file_reader:
+    type: file-read-effect
+    config:
+      encoding: "utf8"
+      defaultPath: "./data/input.json"
+
+  fetcher:
+    type: fetch-effect
+    config:
+      timeout: 5000
+
+  # === ФУНКЦИИ ===
+  # динамическая
+  dyn_fn:
+    type: function-compute
+    config:
+      inputPorts: ["in"]
+      async: false
+
+  # статическая
+  static_fn:
+    type: function-compute
+    config:
+      function: |
+        const cnt = (inputs.run_counter||0) + 1;
+        return {
+          fileData: inputs.content,
+          apiTitle: inputs.response.data.title,
+          counter: cnt
+        };
+      inputPorts: ["content","response","run_counter"]
+
+  # === ВЫВОД ===
+  console_out:
+    type: console-effect
+    config:
+      prefix: "▶️ Output:"
+      format: pretty
+
+  file_writer:
+    type: file-write-effect
+    config:
+      createDirs: true
+      defaultPath: "./output/result.json"
+
+connections:
+  # 1. Стартер запускает file_reader и fetcher
+  - from: { block: starter, port: trigger }
+    to:   { block: file_reader, port: path }
+  - from: { block: starter, port: trigger }
+    to:   { block: fetcher,   port: url }
+
+  - from: { block: starter, port: trigger }
+    to:   { block: dyn_fn, port: in }
+
+  # 2. file_reader → static_fn
+  - from: { block: file_reader, port: content }
+    to:   { block: static_fn, port: content }
+  # 3. fetcher → static_fn
+  - from: { block: fetcher, port: response }
+    to:   { block: static_fn, port: response }
+  # 4. counter → static_fn
+  - from: { block: run_counter, port: get }
+    to:   { block: static_fn, port: run_counter }
+
+  # 5. static_fn → console + file + counter
+  - from: { block: static_fn, port: result }
+    to:   { block: console_out, port: data }
+  - from: { block: static_fn, port: result }
+    to:   { block: file_writer,   port: content }
+  - from: { block: static_fn, port: result }
+    to:   { block: run_counter,   port: set }
+
+  # 6. Динамическая функция: сначала подаем код, затем вход
+  - from: { block: code_const, port: value }
+    to:   { block: dyn_fn,     port: code }
+  - from: { block: starter,    port: trigger }
+    to:   { block: dyn_fn,     port: in }
+  - from: { block: run_counter, port: get }
+    to:   { block: dyn_fn,     port: run_counter }
+
+  # 7. dyn_fn → console
+  - from: { block: dyn_fn, port: result }
+    to:   { block: console_out, port: data }
+
+  # 8. timer → console
+  - from: { block: ticker, port: tick }
+    to:   { block: console_out, port: data }
+
+  # 9. file_writer confirmation → console
+  - from: { block: file_writer, port: written }
+    to:   { block: console_out, port: data }

@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 import { FlowEngine } from '@workflow-tool/workflow';
 import { ConsoleLogger } from '@workflow-tool/workflow';
-import { getErrorMessage } from '@workflow-tool/shared';
+import { getErrorMessage, mapToSafeEnv } from '@workflow-tool/shared';
 
 export function addBlockTestCommands(program: Command, getEngine: () => FlowEngine) {
   program
@@ -29,6 +29,7 @@ export function addBlockTestCommands(program: Command, getEngine: () => FlowEngi
 
         // Создаем экземпляр блока
         const BlockClass = blockDescriptor.blockClass;
+        if (!BlockClass) throw new Error('BlockClass not defined');
         const blockInstance = new BlockClass();
 
         // Парсим конфигурацию
@@ -55,7 +56,7 @@ export function addBlockTestCommands(program: Command, getEngine: () => FlowEngi
         const logger = new ConsoleLogger('debug');
         const ctx = {
           logger,
-          env: process.env,
+          env: mapToSafeEnv(process.env),
           emit: (port: string, data: unknown) => {
             console.log(`📤 Emitted on port '${port}':`, data);
           },

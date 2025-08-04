@@ -19,11 +19,15 @@
     "clean:server": "cd apps/flow-configuration-server && bun run clean || true",
     "clean:dist": "rm -rf dist",
     "clean:all": "bun run clean:client && bun run clean:server && bun run clean:dist",
-    "clean:all-dependencies": "rm -rf node_modules packages/*/node_modules apps/*/node_modules"
+    "clean:all-dependencies": "rm -rf node_modules packages/*/node_modules apps/*/node_modules",
+    "typecheck:client": "cd apps/flow-configuration-client && tsc --noemit",
+    "typecheck:server": "cd apps/flow-configuration-server && tsc --noemit",
+    "typecheck:cli": "cd apps/cli && tsc --noemit",
+    "typecheck": "bun run typecheck:client && bun run typecheck:server && bun run typecheck:cli"
   },
   "devDependencies": {
     "@types/bun": "^1.2.19",
     "@types/node": "^20.0.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.9.2"
   }
 }

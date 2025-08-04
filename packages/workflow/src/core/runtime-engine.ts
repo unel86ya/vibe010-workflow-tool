@@ -1,5 +1,6 @@
 import {
   getErrorMessage,
+  toError,
   FlowDefinition,
   FlowConfig,
   BlockDescriptor,
@@ -18,52 +19,40 @@ export class FlowEngine {
     this.logger.debug(`Registered block: ${descriptor.meta.id}`);
   }
 
-  async runFlow(flow: FlowDefinition, config: FlowConfig = {}): Promise<void> {
+  public async runFlow(flow: FlowDefinition, config: FlowConfig = {}): Promise<void> {
     const flowId = `${flow.name}-${Date.now()}`;
+    this.logger.info(`🚀 Starting flow: ${flow.name} (${flowId})`);
 
-    this.logger.info(`Starting flow: ${flow.name} (${flowId})`);
+    const coordinator = new FlowCoordinator(flowId, this.logger);
+    this.runningFlows.set(flowId, coordinator);
 
-    try {
-      const coordinator = new FlowCoordinator(flowId, this.logger);
-      this.runningFlows.set(flowId, coordinator);
-
-      // Регистрируем блоки в координаторе
-      for (const [blockId, blockConfig] of Object.entries(flow.blocks)) {
-        const descriptor = this.registeredBlocks.get(blockConfig.type);
-        if (!descriptor) {
-          throw new Error(`Unknown block type: ${blockConfig.type}`);
-        }
-        coordinator.registerBlock(blockId, descriptor);
-      }
-
-      // Добавляем соединения
-      for (const connection of flow.connections) {
-        coordinator.addConnection(
-          { blockId: connection.from.block, port: connection.from.port },
-          { blockId: connection.to.block, port: connection.to.port }
-        );
-      }
-
-      // Инициализируем блоки
-      const blockConfigs = Object.fromEntries(
-        Object.entries(flow.blocks).map(([id, block]) => [id, block.config || {}])
-      );
-
-      await coordinator.initializeBlocks(blockConfigs);
-
-      // Ищем event блоки и запускаем их
-      await this.startEventBlocks(coordinator, flow);
-
-      // Ждем завершения или прерывания
-      await this.waitForCompletion(coordinator, config.timeout);
-
-    } catch (error) {
-      this.logger.error(`Flow ${flowId} failed: ${getErrorMessage(error)}`);
-      throw error;
-    } finally {
-      await this.stopFlow(flowId);
+    // 1) Регистрируем блокы
+    for (const [blockId, blockConfig] of Object.entries(flow.blocks)) {
+      const descriptor = this.registeredBlocks.get(blockConfig.type)!;
+      coordinator.registerBlock(blockId, descriptor);
     }
+
+    // 2) Создаём без init
+    const blockConfigs = Object.fromEntries(
+      Object.entries(flow.blocks).map(([id, blk]) => [id, blk.config || {}])
+    );
+    coordinator.createInstances(blockConfigs);
+
+    // 3) Регистрируем соединения
+    for (const conn of flow.connections) {
+      coordinator.addConnection(
+        { blockId: conn.from.block, port: conn.from.port },
+        { blockId: conn.to.block, port: conn.to.port }
+      );
+    }
+
+    // 4) Инициализируем ВСЕ блоки
+    await coordinator.initializeInstances(blockConfigs);
+
+    // 5) Ждём завершения
+    await this.waitForCompletion(coordinator, config.timeout);
   }
+
 
   private async startEventBlocks(coordinator: FlowCoordinator, flow: FlowDefinition): Promise<void> {
     for (const [blockId, blockConfig] of Object.entries(flow.blocks)) {

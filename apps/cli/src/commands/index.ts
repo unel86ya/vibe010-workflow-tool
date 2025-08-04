@@ -13,6 +13,8 @@ import { addBlockTestCommands } from './block/test';
 
 export function registerCommands(program: Command, getEngine: () => FlowEngine) {
   // Flow commands
+  console.log('🐛 Registering commands...');
+
   addRunCommands(program, getEngine);
   addValidateCommands(program, getEngine);
   addListCommands(program);

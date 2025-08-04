@@ -1,17 +1,33 @@
 #!/usr/bin/env bun
 import { Command } from 'commander';
-import { runFlow } from '@workflow-tool/workflow';
+import { FlowEngine, ConsoleLogger, YamlUtils } from '@workflow-tool/workflow';
+import { getErrorMessage } from '@workflow-tool/shared';
 
 const program = new Command();
 
 program
-  .name('llm-cli')
-  .description('CLI runner for LLM workflows')
+  .name('workflow-cli')
+  .description('CLI runner for workflows')
   .argument('<config>', 'Path to workflow config')
   .action(async (config) => {
-    console.log(`Loading config: ${config}`);
-    const result = await runFlow({ name: 'test', steps: [] });
-    console.log('Result:', result);
+    try {
+      console.log(`Loading config: ${config}`);
+
+      // Создаём движок
+      const logger = new ConsoleLogger();
+      const engine = new FlowEngine(logger);
+
+      // Загружаем workflow из YAML
+      const flow = await YamlUtils.loadFlow(config);
+
+      // Запускаем через движок
+      const result = await engine.runFlow(flow);
+      console.log('✅ Flow completed successfully');
+
+    } catch (error) {
+      console.error('❌ Flow failed:', getErrorMessage(error));
+      process.exit(1);
+    }
   });
 
 program.parse();

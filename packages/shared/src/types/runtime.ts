@@ -1,4 +1,4 @@
-import { BlockConfig } from "./block";
+import type { BlockConfig } from "./block";
 
 export interface InvokeResult {
   out?: Record<string, unknown>;

@@ -17,7 +17,8 @@ export class ConsoleEffect implements BlockRuntime {
       id: 'console-effect',
       title: 'Console Effect',
       version: '1.0.0',
-      description: 'Выводит данные в stdout или stderr'
+      description: 'Выводит данные в stdout или stderr',
+      filePath: __filename,
     },
     kind: 'effect',
     ports: [
@@ -25,7 +26,7 @@ export class ConsoleEffect implements BlockRuntime {
         name: 'data',
         direction: 'in',
         description: 'Данные для вывода',
-        schema: { type: 'any' },
+        schema: {},
         required: true
       },
       {

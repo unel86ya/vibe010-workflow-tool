@@ -20,7 +20,8 @@ export class FileWriteEffect implements BlockRuntime {
       id: 'file-write-effect',
       title: 'File Write Effect',
       version: '1.0.0',
-      description: 'Записывает данные в файл'
+      description: 'Записывает данные в файл',
+      filePath: __filename,
     },
     kind: 'effect',
     ports: [

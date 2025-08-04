@@ -15,6 +15,8 @@ import './blocks/effects/console-effect';
 import './blocks/effects/fetch-effect';
 import './blocks/effects/variable-effect';
 import './blocks/compute/function-compute';
+import './blocks/compute/const-block';
+import './blocks/compute/variable-block';
 
 let globalEngine: FlowEngine;
 

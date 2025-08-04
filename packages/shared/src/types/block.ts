@@ -1,10 +1,13 @@
+import type { JSONSchema7 } from 'json-schema';
+import type { BlockRuntime } from "./runtime";
+
 export type PortDirection = 'in' | 'out' | 'error';
 export type BlockKind = 'event' | 'effect' | 'compute';
 
 export interface PortDescriptor<T = unknown> {
   name: string;
   direction: PortDirection;
-  schema?: object; // JSON Schema
+  schema?: JSONSchema7;
   description?: string;
   required?: boolean;
 }
@@ -17,6 +20,7 @@ export interface BlockMeta {
   keywords?: string[];
   author?: string;
   icon?: string;
+  filePath: string;
 }
 
 export interface BlockConfig {
@@ -27,6 +31,7 @@ export interface BlockDescriptor {
   meta: BlockMeta;
   kind: BlockKind;
   ports: PortDescriptor[];
-  configSchema?: object;
+  configSchema?: JSONSchema7;
   sideEffects?: boolean;
+  blockClass?: new (...args: any[]) => BlockRuntime;
 }
