@@ -50,10 +50,10 @@ export class FunctionCompute implements BlockRuntime {
     }
   };
 
-  private config: FunctionConfig;
+  private config?: FunctionConfig;
   private compiledFunction?: Function;
   private accumulator = new Map<string, unknown>();
-  private expectedPorts: Set<string>;
+  private expectedPorts?: Set<string>;
 
   async init(config: BlockConfig, ctx: RunContext): Promise<void> {
     this.config = config as any as FunctionConfig;
@@ -65,12 +65,12 @@ export class FunctionCompute implements BlockRuntime {
   }
 
   async onInvoke(port: string, data: unknown, ctx: RunContext): Promise<InvokeResult> {
-    ctx.logger.debug(`FunctionCompute received on port ${port}:`, data);
+    ctx.logger.debug(`FunctionCompute received on port "${port}":`, data);
 
     // Если пришёл код — компилируем
     if (port === 'code') {
       const codeStr = String(data);
-      this.compileFunction(codeStr, this.config.async || false, ctx);
+      this.compileFunction(codeStr, ctx);
       return { out: { waiting: true } };
     }
 
@@ -89,13 +89,11 @@ export class FunctionCompute implements BlockRuntime {
     return { out: { waiting: true } };
   }
 
-  private compileFunction(code: string, isAsync: boolean, ctx: RunContext) {
+  private compileFunction(code: string, ctx: RunContext) {
+    ctx.logger.debug('Trying to compile code, ', code);
     try {
-      const wrapper = isAsync
-        ? `return (async function(inputs, ctx){${code}})();`
-        : `return (function(inputs, ctx){${code}})();`;
+      this.compiledFunction = new Function('inputs', 'ctx', code);
 
-      this.compiledFunction = new Function('inputs', 'ctx', wrapper);
       ctx.logger.debug('✅ Function compiled');
     } catch (err) {
       const msg = (err instanceof Error ? err.message : String(err));
@@ -105,12 +103,15 @@ export class FunctionCompute implements BlockRuntime {
   }
 
   private isReady(): boolean {
+    if (!this.expectedPorts) return false;
+
     if (this.expectedPorts.size === 0) {
       return this.accumulator.size > 0;
     }
     for (const p of this.expectedPorts) {
       if (!this.accumulator.has(p)) return false;
     }
+
     return true;
   }
 

@@ -39,12 +39,14 @@ export class FlowEngine {
     coordinator.createInstances(blockConfigs);
 
     // 3) Регистрируем соединения
+    this.logger.debug(`Registering ${flow.connections.length} connections...`);
     for (const conn of flow.connections) {
       coordinator.addConnection(
         { blockId: conn.from.block, port: conn.from.port },
         { blockId: conn.to.block, port: conn.to.port }
       );
     }
+    this.logger.debug(`All connections registered successfully`);
 
     // 4) Инициализируем ВСЕ блоки
     await coordinator.initializeInstances(blockConfigs);

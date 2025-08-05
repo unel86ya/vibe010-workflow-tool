@@ -77,14 +77,17 @@ export class FileReadEffect implements BlockRuntime {
       const filePath = (data as string) || this.config.defaultPath;
 
       if (!filePath) {
+        ctx.logger.error(`No file path provided`);
+
         return { error: 'No file path provided' };
       }
 
       ctx.logger.info(`Reading file: ${filePath}`);
 
-      const content = await readFile(filePath, this.config.encoding || 'utf8');
       const stats = await stat(filePath);
+      const content = await readFile(filePath, this.config.encoding || 'utf8');
 
+      ctx.logger.info('File read successfully', stat);
       return {
         out: {
           content: {

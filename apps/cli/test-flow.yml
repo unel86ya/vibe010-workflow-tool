@@ -88,7 +88,12 @@ blocks:
 connections:
   # 1. Стартер запускает file_reader и fetcher
   - from: { block: starter, port: trigger }
-    to:   { block: file_reader, port: path }
+    to:   { block: file_reader, port: trigger }
+
+
+  - from: { block: file_path, port: value }
+    to:  { block: file_reader, port: path }
+
   - from: { block: starter, port: trigger }
     to:   { block: fetcher,   port: url }
 

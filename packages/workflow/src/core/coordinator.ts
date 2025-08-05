@@ -39,6 +39,7 @@ export class FlowCoordinator extends EventEmitter {
       this.connections.set(key, new Set());
     }
     this.connections.get(key)!.add(to);
+    this.logger.info(`🔗 Added connection: ${from.blockId}:${from.port} -> ${to.blockId}:${to.port}`);
   }
 
   async createInstances(configs: Record<string, any>): Promise<void> {
@@ -72,6 +73,8 @@ export class FlowCoordinator extends EventEmitter {
         this.logger.debug(`🔧 Initializing block: ${blockId}`);
         await instance.init(config, ctx);
         this.logger.debug(`✅ Initialized block: ${blockId}`);
+      } else {
+        this.logger.warn(`⚠️ Block ${blockId} does not have an init method`);
       }
     }
     this.logger.info(`✅ All blocks initialized`);
